@@ -39,7 +39,7 @@ class HistorySynchronizer(application: Application) extends ViewSynchronizer wit
 
   private val GettingBlockTimeout = application.settings.historySynchronizerTimeout
 
-  var lastUpdate: Option[Long] = None
+  private var lastUpdate: Option[Long] = None
 
   override def preStart: Unit = {
     super.preStart()

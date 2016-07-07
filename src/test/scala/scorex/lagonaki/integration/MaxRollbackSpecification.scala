@@ -19,6 +19,8 @@ import scala.annotation.tailrec
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext}
 
+import scala.language.postfixOps
+
 
 class MaxRollbackSpecification extends FunSuite with Matchers with BeforeAndAfter with ScorexLogging {
 
@@ -27,7 +29,7 @@ class MaxRollbackSpecification extends FunSuite with Matchers with BeforeAndAfte
 
   import TestingCommons.initialize
 
-  val testTimeout = 100.seconds
+  val testTimeout = 100 seconds
 
   val peers = initialize(Seq("settings-local1.json", "settings-local2.json"))
 
@@ -35,7 +37,7 @@ class MaxRollbackSpecification extends FunSuite with Matchers with BeforeAndAfte
   val state = peer.transactionModule.blockStorage.state
   val history = peer.transactionModule.blockStorage.history
 
-  implicit val timeout = Timeout(1.second)
+  implicit val timeout = Timeout(1 second)
 
   implicit val executionContext = ExecutionContext.global
   implicit val consensusModule = peer.consensusModule
@@ -147,7 +149,7 @@ class MaxRollbackSpecification extends FunSuite with Matchers with BeforeAndAfte
 
     val last = peers.head.blockStorage.history.lastBlock
 
-    untilTimeout(testTimeout, 1.second) {
+    untilTimeout(testTimeout, 1 second) {
       peers.foreach(_.blockStorage.history.contains(last) shouldBe true)
     }
 
@@ -157,7 +159,7 @@ class MaxRollbackSpecification extends FunSuite with Matchers with BeforeAndAfte
 
     stopGeneration()
 
-    val bestPeer = untilTimeout(5.seconds) {
+    val bestPeer = untilTimeout(5 seconds) {
       val one = peers.head
       val another = peers.last
 
@@ -180,7 +182,7 @@ class MaxRollbackSpecification extends FunSuite with Matchers with BeforeAndAfte
 
     val h = startingFrom + howMany
 
-    untilTimeout(testTimeout, 1.second) {
+    untilTimeout(testTimeout, 1 second) {
       val heights = participants.map(_.blockStorage.history.height())
       log.info(s"Current heights are: $heights. Waiting for $h")
 
@@ -230,7 +232,7 @@ class MaxRollbackSpecification extends FunSuite with Matchers with BeforeAndAfte
           peerManager ! RemoveFromBlacklist(blockedPeer)
         }
 
-        untilTimeout(5.seconds) {
+        untilTimeout(5 seconds) {
           Await.result((peerManager ? GetBlacklistedPeers).mapTo[Seq[String]], timeout.duration).isEmpty shouldBe true
           Await.result((peerManager ? GetAllPeers).mapTo[Map[InetSocketAddress, _]], timeout.duration).isEmpty shouldBe false
         }
